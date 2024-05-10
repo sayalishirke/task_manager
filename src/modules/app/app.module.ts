@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TasksModule } from './tasks/tasks.module';
-import { DatabaseService } from './database/typeorm.config';
+import { TasksModule } from '../tasks/tasks.module';
+import { DatabaseService } from '../../config/typeorm.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { OtpModule } from './otp/otp.module';
+import { OtpModule } from '../otp/otp.module';
 
 @Module({
   imports: [
