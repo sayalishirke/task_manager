@@ -1,14 +1,23 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+    BadRequestException, 
+    Body, 
+    Controller, 
+    Delete, 
+    Get, 
+    Param, 
+    ParseIntPipe, 
+    Patch, 
+    Post, 
+    Query, 
+    UsePipes, 
+    ValidationPipe 
+} from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { TaskStatus } from './tasks.model';
 import { createTaskDto } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
 import { statusValidationPipe } from './pipes/status-validation.pipe';
-// import { TaskRepository } from './tasks.repository';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Task } from './task.entity';
 import { GetTaskResponseDto } from './dto/get-task-response.dto';
-import { error } from 'console';
 
 @Controller('tasks')
 @UsePipes(ValidationPipe)
@@ -17,22 +26,41 @@ export class TasksController {
     constructor(private tasksService: TasksService){}
 
     @Get()
-    getAllTasks(): Promise<Task[]> {
+    async filterTasks(
+        @Query(new ValidationPipe()) filterTaskDto: GetTaskFilterDto
+    ): Promise<GetTaskResponseDto[] | object> {
         try{
-            return this.tasksService.getAllTasks()
+            // if(Object.keys(filterTaskDto).length){
+            const result = await this.tasksService.getFilteredTasks(filterTaskDto)
+            if (typeof(result) === 'boolean'){
+                return {"Message": "No records found"}
+            }
+            return result
+            // }
         }
-        catch (error){
+        catch (error) {
             throw new BadRequestException(error.message)
         }
         
     }
+
+    // @Get()
+    // async getAllTasks(): Promise<GetTaskResponseDto[]> {
+    //     try{
+    //         return this.tasksService.getAllTasks()
+    //     }
+    //     catch (error){
+    //         throw new BadRequestException(error.message)
+    //     }
+        
+    // }
     
     @Get('/:id')
-    getTaskById(
+    async getTaskById(
         @Param('id', ParseIntPipe) id:number
     ): Promise<GetTaskResponseDto> {
         try {
-            return this.tasksService.getTaskById(id)
+            return await this.tasksService.getTaskById(id)
         }
         catch (error){
             throw new BadRequestException(error.message)
@@ -40,34 +68,45 @@ export class TasksController {
     }
 
     @Post()
-    createTask(
+    async createTask(
         @Body(new ValidationPipe()) createTaskDto: createTaskDto
     ): Promise<GetTaskResponseDto> {
         try{
-            return this.tasksService.createTask(createTaskDto)
+            return await this.tasksService.createTask(createTaskDto)
         }
         catch (error){
             throw new BadRequestException(error.message)
         }
         
-    }
-    
+    }    
 
     @Delete('/:id')
-    deleteTaskById(
+    async deleteTaskById(
         @Param('id', ParseIntPipe) id: number,
-    ):Promise<void> {
-        return this.tasksService.deleteTask(id)
+    ):Promise<object> {
+        try{
+            await this.tasksService.deleteTask(id)
+            return {"message": "Task deleted successfully"}
+        }
+        catch (error){
+            throw new BadRequestException(error.message)
+        }
     }
 
     @Patch('/:id/status')
-    updateStatus(
+    async updateStatus(
         @Param('id', ParseIntPipe) id:number,
-        @Body('status', statusValidationPipe) status:TaskStatus): string {
-            this.tasksService.updateTask(id, status)
-            return ("Task status updated successfully")
-    }    
-}
+        @Body('status', statusValidationPipe) status:TaskStatus): Promise<object> {
+            try{
+                await this.tasksService.updateTask(id, status)
+                return {"message": "Task status updated successfully"}
+            }
+            catch (error){
+                throw new BadRequestException(error.message)
+            }
+        }
+}    
+
 
 
 

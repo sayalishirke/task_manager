@@ -39,6 +39,5 @@ export class OtpService {
         catch (error){
             throw new Error(error.message)
         }
-        
     }
 }
