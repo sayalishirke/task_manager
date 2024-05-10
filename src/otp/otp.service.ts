@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as Redis from 'ioredis';
 
 @Injectable()
 export class OtpService {
     private readonly redisClient: Redis.Redis;
-    constructor() {
+    constructor(private configService: ConfigService) {
         this.redisClient = new Redis.Redis;
     }
 
@@ -15,7 +16,7 @@ export class OtpService {
                 key.toString(),
                 otp,
                 'EX',
-                10,
+                this.configService.getOrThrow('EXPIRY_TIME'),
             )
             return otp
         }
