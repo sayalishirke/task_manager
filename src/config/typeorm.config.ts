@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmOptionsFactory, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { Task } from 'src/modules/tasks/task.entity';
+import { Task } from 'src/storage/task.entity';
 
 @Injectable()
 export class DatabaseService implements TypeOrmOptionsFactory{
@@ -16,7 +16,7 @@ export class DatabaseService implements TypeOrmOptionsFactory{
           password: this.configService.getOrThrow('POSTGRES_PASSWORD'),
           database: this.configService.getOrThrow('POSTGRES_DATABASE'),
           autoLoadEntities: true,
-          entities: [Task],
+          // entities: [Task],
           // entities: [__dirname + '/**/*.entity{.ts,.js}'],
           synchronize: this.configService.getOrThrow('SYNCHRONIZE') === 'true', // Convert string to boolean
         };

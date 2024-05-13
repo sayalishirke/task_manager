@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { TaskStatus } from './tasks.model';
 import { createTaskDto } from './dto/create-task.dto';
 import { GetTaskFilterDto } from './dto/get-tasks-filter.dto';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
-import { Task } from './task.entity';
+import { Task } from '../../storage/task.entity';
 import { EntityManager, Repository } from 'typeorm';
 import { GetTaskResponseDto } from './dto/get-task-response.dto';
 import { Like } from 'typeorm';

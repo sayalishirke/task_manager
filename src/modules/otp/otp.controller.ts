@@ -1,13 +1,19 @@
-import { Controller, Post, Body, BadRequestException, ValidationPipe } from '@nestjs/common';
+import { Controller, Post, Body, BadRequestException, ValidationPipe, UseGuards } from '@nestjs/common';
 import { OtpService } from './otp.service';
 import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { SendOtpResponseDto } from './dto/send-otp-response.dto';
 import { VerifyOtpResponseDto } from './dto/verify-otp-response.dto';
+import { LoggerService } from 'src/logger.service';
+import { AuthenticationGuard } from '../auth/auth.guard';
 
 @Controller('otp')
+@UseGuards(AuthenticationGuard)
 export class OtpController {
-    constructor(private readonly otpService: OtpService) { }
+    constructor(
+        private readonly otpService: OtpService,
+        private readonly logger: LoggerService
+    ) { }
 
     @Post('sendotp')
     async sendOtp(@Body(new ValidationPipe()) sendOtpDto: SendOtpDto): Promise<SendOtpResponseDto> {
@@ -16,6 +22,7 @@ export class OtpController {
             const responseDto: SendOtpResponseDto = {
                 otp: otp.toString()
             }
+            this.logger.log("logger testing")
             return responseDto
         }
         catch (error) {
