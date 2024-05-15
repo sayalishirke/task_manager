@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { User } from '../../storage/user.entity';
 import { EntityManager, Repository } from 'typeorm';
+import { CreateUserRespDto } from './dto/create-user-resp.dto';
 
 @Injectable()
 export class UsersService {
@@ -20,9 +21,9 @@ export class UsersService {
   //   return `This action returns all users`;
   // }
 
-  async createUser(email:string, password:string):Promise<User | undefined>{
+  async createUser(email:string, password:string):Promise<CreateUserRespDto>{
     try{
-        const newUser = new User({email,password})
+        const newUser:CreateUserRespDto = new User({email,password})
         await this.entityManager.save(newUser)
         return newUser
     }  

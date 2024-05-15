@@ -4,15 +4,16 @@ import { SendOtpDto } from './dto/send-otp.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { SendOtpResponseDto } from './dto/send-otp-response.dto';
 import { VerifyOtpResponseDto } from './dto/verify-otp-response.dto';
-import { LoggerService } from 'src/logger.service';
+// import { LoggerService } from 'src/logger.service';
 import { AuthenticationGuard } from '../auth/auth.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('login')
 @Controller('otp')
-@UseGuards(AuthenticationGuard)
 export class OtpController {
     constructor(
         private readonly otpService: OtpService,
-        private readonly logger: LoggerService
+        // private readonly logger: LoggerService
     ) { }
 
     @Post('sendotp')
@@ -22,7 +23,7 @@ export class OtpController {
             const responseDto: SendOtpResponseDto = {
                 otp: otp.toString()
             }
-            this.logger.log("logger testing")
+            // this.logger.log("logger testing")
             return responseDto
         }
         catch (error) {
